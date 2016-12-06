@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Request;
 
 class Util
 {
+    public static $jsonOptions = 0;
+
     public static function getSuccessJson($success, $data, $jsonOptions=null)
     {
         $data = ["code" => 0, "message" => $success, "data" => $data];
