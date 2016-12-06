@@ -12,8 +12,8 @@ class WxService{
     const API_BASE_URL = 'https://api.weixin.qq.com/';
     const UPLOAD_PIC_URL = 'http://file.api.weixin.qq.com/cgi-bin/media/upload';
 
-    protected $appId = 'wxc9e38adf6b9814cd';
-    protected $appSecret = '0c55f23872aa8801a14b2a9e1eabbfee';
+    protected $appId = 'wxe5613adadd2e9d16';
+    protected $appSecret = '8553bf7429487a1aacd32df0a688c3aa';
 
 //     const SERVICE_APP_ID = 'wxe5613adadd2e9d16';
 //     const SERVICE_APP_SECRET = '8553bf7429487a1aacd32df0a688c3aa';
@@ -50,7 +50,7 @@ class WxService{
     );
 
     static $aliasMap = [
-        'pt_chrismas' => ['appid' => 'wxe5613adadd2e9d16', 'secret' => '8553bf7429487a1aacd32df0a688c3aa']
+        'pt_chrismas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2']
     ];
 
     public function __construct($alias)
