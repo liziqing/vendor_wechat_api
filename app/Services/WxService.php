@@ -50,7 +50,7 @@ class WxService{
     );
 
     static $aliasMap = [
-        'pt_chrismas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2']
+        'pt_christmas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2']
     ];
 
     public function __construct($alias)
