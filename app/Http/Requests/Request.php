@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace VendorWechat\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

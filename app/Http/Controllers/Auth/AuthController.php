@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace VendorWechat\Http\Controllers\Auth;
 
-use App\User;
+use VendorWechat\User;
 use Validator;
-use App\Http\Controllers\Controller;
+use VendorWechat\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 

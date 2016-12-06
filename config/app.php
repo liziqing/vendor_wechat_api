@@ -151,10 +151,10 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        VendorWechat\Providers\AppServiceProvider::class,
+        VendorWechat\Providers\AuthServiceProvider::class,
+        VendorWechat\Providers\EventServiceProvider::class,
+        VendorWechat\Providers\RouteServiceProvider::class,
 
     ],
 
