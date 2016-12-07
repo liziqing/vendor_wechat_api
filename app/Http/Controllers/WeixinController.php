@@ -56,7 +56,7 @@ class WeixinController extends Controller
         }
     }
 
-    public function getUserinfo(Request $request)
+    public function getUserInfo(Request $request)
     {
         try{
             $accessToken = $request->input('token');
