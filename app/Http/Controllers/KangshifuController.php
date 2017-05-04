@@ -8,7 +8,7 @@ namespace VendorWechat\Http\Controllers;
 
 use Illuminate\Http\Request;
 use VendorWechat\Util\Util;
-use Qiniu\Auth;
+//use Qiniu\Auth;
 
 class KangshifuController extends Controller
 {
@@ -16,7 +16,7 @@ class KangshifuController extends Controller
 	{
 		$accessKey = Util::QINIU_ACCESS_KEY;
 		$secretKey = Util::QINIU_SECRET_KEY;
-		$auth = new Auth($accessKey, $secretKey);// 构建鉴权对象
+		$auth = new \Qiniu\Auth($accessKey, $secretKey);// 构建鉴权对象
 		$token = $auth->uploadToken('vendor-ads');
 
 		return Util::getSuccessJson("success", ['token'=>$token]);
