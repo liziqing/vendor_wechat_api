@@ -3,6 +3,7 @@
 /public/storage
 Homestead.yaml
 Homestead.json
+composer.lock
 .env
 .settings/org.eclipse.php.core.prefs
 .settings/org.eclipse.wst.common.project.facet.core.xml
