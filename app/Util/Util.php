@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Request;
 
 class Util
 {
+    const QINIU_ACCESS_KEY = "nR4zZ4XaxesEAhPW59BZNtWOMu4aD-pnHcg28iF6";
+    const QINIU_SECRET_KEY = "uaykXj8wnZwWT3n02XG-keUat-UOUGfbGxHKEgUr";
+
     public static $jsonOptions = 0;
 
     public static function getSuccessJson($success, $data, $jsonOptions=null)

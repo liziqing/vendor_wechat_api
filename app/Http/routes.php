@@ -12,3 +12,4 @@
 */
 
 Route::controller('weixin', 'WeixinController');
+Route::controller('kangshifu', 'KangshifuController');
