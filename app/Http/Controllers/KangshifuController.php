@@ -21,4 +21,28 @@ class KangshifuController extends Controller
 
 		return Util::getSuccessJson("success", ['token'=>$token]);
 	}
+	public function postUpUserInfo(Request $req)
+	{
+		$name = $req->input('name', '');
+		$mobile = $req->input('mobile', '');
+
+		if (!empty($mobile))
+		{
+			$cRedis = \Redis::connection();
+			if (!$cRedis->exists($mobile))
+				$cRedis->hset($mobile, 'huo_li', 0);
+			if (!empty($name))
+				$cRedis->hset($mobile, 'name', $name);
+		}
+		return Util::getSuccessJson("success", [])
+			->withCookie(cookie('ksf_mobile', $mobile, 0, '/', 'ksf.com', true));
+	}
+	public function getUserInfo(Request $req)
+	{
+		$mobile = Cookie::get('ksf_mobile', '');
+		$cRedis = \Redis::connection();
+		$name = $cRedis->hget($mobile, 'name');
+		if (empty($name)) $name = '';
+		return Util::getSuccessJson("success", ['mobile'=>$mobile,'name'=>$name]);
+	}
 }
