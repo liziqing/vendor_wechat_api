@@ -69,18 +69,36 @@ class KangshifuController extends Controller
 	}
 	public function postImageUp(Request $req)
 	{
+		$noCookie = false;
+		$cRedis = \Redis::connection();
 		$mobile = \Cookie::get(self::KSF_COOKIE, '');
 		if (empty($mobile))
-			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "前填写手机号");
+		{
+			$firstMobile = $req->input('mobile', '');
+			if (empty($firstMobile))
+				return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
+			//新建用户
+			if (!$cRedis->exists(self::KSF_PREFIX.$mobile))
+				$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 0);
+			$noCookie = true;
+		}
 
 		$type = $req->input('type', 0);//1订单 2活力时刻
 		$url = $req->input('url', '');
 
-		$cRedis = \Redis::connection();
 		$zkey = self::KSF_PREFIX."$mobile:$type:1";//1待审核 不进墙
 		$timestamp = (new \DateTime("now"))->getTimestamp();
 		$cRedis->zadd($zkey, $timestamp, $url);
-		return Util::getSuccessJson("success", []);
+
+		if ($noCookie)
+		{
+			return Util::getSuccessJson("success", [])
+				->withCookie(cookie(self::KSF_COOKIE, $mobile, 0, '/', 'vendor.qnmami.com', true));
+		}
+		else
+		{
+			return Util::getSuccessJson("success", []);
+		}
 	}
 	public function getImageList(Request $req)
 	{
