@@ -20,6 +20,16 @@ class KangshifuController extends Controller
 	const USER_HUOLI = 'huo_li';
 	const USER_NAME  = 'name';
 
+	private function delDb()
+	{
+		$cRedis = \Redis::connection();
+		$asHashKey = $cRedis->keys(self::KSF_PREFIX.'*');
+		foreach ($asHashKey as $sHashKey)
+		{
+			$cRedis->del($sHashKey);
+		}
+	}
+
 	public function getQnToken(Request $request)
 	{
 		$accessKey = Util::QINIU_ACCESS_KEY;
@@ -43,7 +53,7 @@ class KangshifuController extends Controller
 				$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_NAME, $name);
 		}
 		return Util::getSuccessJson("success", [])
-			->withCookie(cookie(self::KSF_COOKIE, $mobile, 0, '/', 'vendor.qnmami.com', true));
+			->withCookie(cookie(self::KSF_COOKIE, $mobile, 0, '/', 'vendor.qnmami.com'));
 	}
 	public function getUserInfo(Request $req)
 	{
@@ -78,8 +88,8 @@ class KangshifuController extends Controller
 			if (empty($firstMobile))
 				return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
 			//新建用户
-			if (!$cRedis->exists(self::KSF_PREFIX.$mobile))
-				$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 0);
+			if (!$cRedis->exists(self::KSF_PREFIX.$firstMobile))
+				$cRedis->hset(self::KSF_PREFIX.$firstMobile, self::USER_HUOLI, 0);
 			$noCookie = true;
 		}
 
@@ -93,7 +103,7 @@ class KangshifuController extends Controller
 		if ($noCookie)
 		{
 			return Util::getSuccessJson("success", [])
-				->withCookie(cookie(self::KSF_COOKIE, $mobile, 0, '/', 'vendor.qnmami.com', true));
+				->withCookie(cookie(self::KSF_COOKIE, $mobile, 0, '/', 'vendor.qnmami.com'));
 		}
 		else
 		{
