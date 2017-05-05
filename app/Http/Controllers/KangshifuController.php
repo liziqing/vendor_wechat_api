@@ -12,6 +12,8 @@ use VendorWechat\Util\Util;
 
 class KangshifuController extends Controller
 {
+	const KSF_PREFIX = 'ksf:';
+
 	public function getQnToken(Request $request)
 	{
 		$accessKey = Util::QINIU_ACCESS_KEY;
@@ -29,19 +31,19 @@ class KangshifuController extends Controller
 		if (!empty($mobile))
 		{
 			$cRedis = \Redis::connection();
-			if (!$cRedis->exists($mobile))
-				$cRedis->hset($mobile, 'huo_li', 0);
+			if (!$cRedis->exists(self::KSF_PREFIX.$mobile))
+				$cRedis->hset(self::KSF_PREFIX.$mobile, 'huo_li', 0);
 			if (!empty($name))
-				$cRedis->hset($mobile, 'name', $name);
+				$cRedis->hset(self::KSF_PREFIX.$mobile, 'name', $name);
 		}
 		return Util::getSuccessJson("success", [])
-			->withCookie(cookie('ksf_mobile', $mobile, 0, '/', 'ksf.com', true));
+			->withCookie(cookie('ksf_mobile', $mobile, 0, '/', 'vendor.qnmami.com', true));
 	}
 	public function getUserInfo(Request $req)
 	{
-		$mobile = Cookie::get('ksf_mobile', '');
+		$mobile = \Cookie::get('ksf_mobile', '');
 		$cRedis = \Redis::connection();
-		$name = $cRedis->hget($mobile, 'name');
+		$name = $cRedis->hget(self::KSF_PREFIX.$mobile, 'name');
 		if (empty($name)) $name = '';
 		return Util::getSuccessJson("success", ['mobile'=>$mobile,'name'=>$name]);
 	}
