@@ -143,6 +143,7 @@ class KangshifuController extends Controller
 		$type = $req->input('type', 0);//1用户的活力时刻 2活力墙 3非墙全活力 订单审核（4未 5已 6不）
 		$offset = $req->input('offset', 0);
 		$limit = $req->input('limit', 20);
+		$admin = $req->input('admin', 0);
 
 		$urlList = [];
 		$cRedis = \Redis::connection();
@@ -165,7 +166,16 @@ class KangshifuController extends Controller
 			}
 			case 2:
 			{
-				$urlList = $this->getImageUrl(self::KSF_PREFIX."2:2:");//array_merge
+				$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:");//array_merge
+				if ($admin)
+					$urlList = $urlListM;
+				else
+				{
+					foreach ($urlListM as $value)
+					{
+						$urlList = array_merge($urlList, $value);
+					}
+				}
 //				$zkeyu = self::KSF_PREFIX."2:2";
 				break;
 			}
