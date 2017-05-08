@@ -214,7 +214,7 @@ class KangshifuController extends Controller
 		];
 		$fromStatus = $map[$type][$result][0];
 		$toStatus = $map[$type][$result][1];
-		$DorH = $type/10;//订单 or 活力
+		$DorH = floor($type/10);//订单 or 活力
 		$fromKey = self::KSF_PREFIX."$DorH:$fromStatus:$mobile";
 		$toKey = self::KSF_PREFIX."$DorH:$toStatus:$mobile";
 
