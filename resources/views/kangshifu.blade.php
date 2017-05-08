@@ -4,7 +4,7 @@
     <a href="javascript:void(0);" onclick="showlist('3')">未上墙</a>
 </p>
 <p>
-    <a href="javascript:void(0);" onclick="showlist('4')">带审核</a>
+    <a href="javascript:void(0);" onclick="showlist('4')">待审核</a>
     <a href="javascript:void(0);" onclick="showlist('5')">已通过</a>
     <a href="javascript:void(0);" onclick="showlist('6')">不通过</a>
 </p>
@@ -13,7 +13,11 @@
 
 <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 <script type="text/javascript">
+    $(document).ready(function(){
+        showlist(4);
+    });
     function showlist(type) {
+        $("#image_list").html("");
         $.ajax({
             type:"get",
             data:{type:type},
@@ -30,8 +34,8 @@
                     for (var i in oneData)
                     {
                         coverLine += "<td><img src='"+oneData[i]+"' title='"+mobile+"' height='150'/>" +
-                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 1)'><i class='glyphicon glyphicon-ok'></i></a>" +
-                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 1)'><i class='glyphicon glyphicon-remove'></i></a></td>";
+                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 1)'>通过</a>--" +
+                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 2)'>不通过</a></td>";
 
                         if (oneLen <= cyc++)
                         {
@@ -42,7 +46,7 @@
                     }
                 }
                 if (0 !== coverLine.length) {
-                    $("#image_list").append("<tr>+coverLine+</tr>");
+                    $("#image_list").append("<tr>"+coverLine+"</tr>");
                 }
             }
         });
