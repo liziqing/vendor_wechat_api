@@ -11,6 +11,7 @@
 
 <div id="image_list"></div>
 
+<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 <script type="text/javascript">
     function showlist(type) {
         $.ajax({
@@ -28,9 +29,9 @@
                     var oneData = list[mobile];
                     for (var i in oneData)
                     {
-                        coverLine += "<td><img src=oneData[i] title=mobile height='150'/>" +
-                            "<a href='javascript:void(0);' onclick='chgStatus(oneData[i], mobile, 1)'><i class='glyphicon glyphicon-ok'></i></a>" +
-                            "<a href='javascript:void(0);' onclick='chgStatus(oneData[i], mobile, 2)'><i class='glyphicon glyphicon-remove'></i></a></td>";
+                        coverLine += "<td><img src="+oneData[i]+" title="+mobile+" height='150'/>" +
+                            "<a href='javascript:void(0);' onclick='chgStatus("+oneData[i]+", "+mobile+", 1)'><i class='glyphicon glyphicon-ok'></i></a>" +
+                            "<a href='javascript:void(0);' onclick='chgStatus("+oneData[i]+", "+mobile+", 1)'><i class='glyphicon glyphicon-remove'></i></a></td>";
 
                         if (oneLen <= cyc++)
                         {

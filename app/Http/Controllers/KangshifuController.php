@@ -102,7 +102,7 @@ class KangshifuController extends Controller
 //			$noCookie = true;
 		}
 
-		$type = $req->input('type', 0);//1订单 2活力时刻
+		$type = $req->input('type', 2);//1订单 2活力时刻
 		$url = $req->input('url', '');
 
 		$zkey = self::KSF_PREFIX."$type:1:$mobile";//1待审核 不进墙
