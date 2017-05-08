@@ -20,7 +20,7 @@
         $("#image_list").html("");
         $.ajax({
             type:"get",
-            data:{type:type},
+            data:{type:type,admin:1},
             dataType:"json",
             url:"/kangshifu/image-list",
             success:function (data) {
