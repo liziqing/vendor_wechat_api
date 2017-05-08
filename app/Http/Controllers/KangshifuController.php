@@ -14,11 +14,15 @@ use VendorWechat\Exceptions\ExceptionConstants;
 class KangshifuController extends Controller
 {
 	const KSF_PREFIX = 'ksf:';
+	const KSF_NOTICE_PREFIX = 'notice:';
 	const KSF_COOKIE = 'ksf_mobile';
 	//1 订单 2 活力时刻  1待审核 2通过 3不通过 1不进墙 2进墙
 
 	const USER_HUOLI = 'huo_li';
 	const USER_NAME  = 'name';
+	const USER_HAVE_PHOTO = 'have_photo';
+	const USER_HAVE_SHARE = 'have_share';
+	const USER_HAVE_WATCH = 'have_watch';
 
 	private function delDb()
 	{
@@ -34,6 +38,73 @@ class KangshifuController extends Controller
 //		$mobile = \Cookie::get(self::KSF_COOKIE, '');
 		$mobile = $req->input('mobile', '');
 		return $mobile;
+	}
+	private function takeHuoLi($mobile, $type)
+	{
+		//1活力照片 2分享 3观看TVC 4订单审核通过 5抽奖扣除
+		$cRedis = \Redis::connection();
+		if ($cRedis->exists(self::KSF_PREFIX.$mobile))
+		{
+			switch ($type)
+			{
+				case 1:
+				{
+					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile))
+					{
+						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile);
+						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 20);
+					}
+					break;
+				}
+				case 2:
+				{
+					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile))
+					{
+						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile);
+						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 4);
+					}
+					break;
+				}
+				case 3:
+				{
+					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile))
+					{
+						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile);
+						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 12);
+					}
+					break;
+				}
+				case 4:
+				{
+					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 72);
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+		}
+	}
+	public static function clearLockDaily()
+	{
+		$cRedis = \Redis::connection();
+		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_PHOTO);
+		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_SHARE);
+		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_WATCH);
+	}
+
+	public function getHaveShare(Request $req)
+	{
+		$mobile = $this->getMobile($req);
+		$this->takeHuoLi($mobile, 2);
+		return Util::getSuccessJson("success", []);
+	}
+	public function getHaveWatch(Request $req)
+	{
+		$mobile = $this->getMobile($req);
+		$this->takeHuoLi($mobile, 3);
+		return Util::getSuccessJson("success", []);
 	}
 
 	public function getQnToken(Request $request)
@@ -108,6 +179,9 @@ class KangshifuController extends Controller
 		$zkey = self::KSF_PREFIX."$type:1:$mobile";//1待审核 不进墙
 		$timestamp = (new \DateTime("now"))->getTimestamp();
 		$cRedis->zadd($zkey, $timestamp, $url);
+
+		if (2 == $type)
+			$this->takeHuoLi($mobile, 1);
 
 		return Util::getSuccessJson("success", []);
 		/*if ($noCookie)
@@ -230,7 +304,23 @@ class KangshifuController extends Controller
 
 		$timestamp = $cRedis->zscore($fromKey, $url);
 		$cRedis->zrem($fromKey, $url);
-		$cRedis->zadd($toKey, $timestamp, $url);
+		$num = $cRedis->zadd($toKey, $timestamp, $url);
+
+		if ((11 == $type || 13 == $type) &&
+			1 == $result && $num > 0)
+		{
+			$this->takeHuoLi($mobile, 4);
+			//通知加入通知列表
+			$cRedis->sadd(self::KSF_PREFIX.self::KSF_NOTICE_PREFIX.$mobile, $url);
+		}
+		return Util::getSuccessJson("success", []);
+	}
+	public function getVerifyStatus(Request $req)
+	{
+		$mobile = $this->getMobile($req);
+		$cRedis = \Redis::connection();
+		$imageUrl = $cRedis->spop(self::KSF_PREFIX.self::KSF_NOTICE_PREFIX.$mobile);
+		return Util::getSuccessJson("success", ['image'=>empty($imageUrl)? '': $imageUrl]);
 	}
 	public function getManage(Request $req)
 	{

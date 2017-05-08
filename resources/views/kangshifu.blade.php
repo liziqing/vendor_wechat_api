@@ -33,9 +33,13 @@
                     var oneData = list[mobile];
                     for (var i in oneData)
                     {
-                        coverLine += "<td><img src='"+oneData[i]+"' title='"+mobile+"' height='150'/>" +
-                            "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
-                            "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 2)\">不通过</a></td>";
+                        coverLine += "<td><img src='"+oneData[i]+"' title='"+mobile+"' height='150'/>";
+                        if (5 !== type)
+                        {
+                            coverLine += "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
+                                "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 2)\">不通过</a>";
+                        }
+                        coverLine += "</td>";
 
                         if (oneLen <= cyc++)
                         {
