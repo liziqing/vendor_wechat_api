@@ -132,7 +132,7 @@ class KangshifuController extends Controller
 			if (!empty($aPregOut[1]))
 			{
 				$mobile = $aPregOut[1];
-				$urlList[] = [$mobile=>$cRedis->zrevrange($zsetKey, 0, -1)];
+				$urlList[$mobile] = $cRedis->zrevrange($zsetKey, 0, -1);
 			}
 //			$urlList = array_merge($urlList, $cRedis->zrevrange($zsetKey, 0, -1));
 		}
