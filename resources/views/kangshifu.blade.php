@@ -34,8 +34,8 @@
                     for (var i in oneData)
                     {
                         coverLine += "<td><img src='"+oneData[i]+"' title='"+mobile+"' height='150'/>" +
-                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 1)'>通过</a>--" +
-                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', 2)'>不通过</a></td>";
+                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', '"+type+"', 1)'>通过</a>--" +
+                            "<a href='javascript:void(0);' onclick='chgStatus('"+oneData[i]+"', '"+mobile+"', '"+type+"', 2)'>不通过</a></td>";
 
                         if (oneLen <= cyc++)
                         {
@@ -48,6 +48,19 @@
                 if (0 !== coverLine.length) {
                     $("#image_list").append("<tr>"+coverLine+"</tr>");
                 }
+            }
+        });
+    }
+    function chgStatus(url, mobile, type, result) {
+        var map = {2:22, 3:21, 4:11, 5:12, 6:13};
+        var mapType = map[type];
+        $.ajax({
+            type:"post",
+            data:{url:url,mobile:mobile,result:result,type:mapType},
+            dataType:"json",
+            url:"/kangshifu/change-status",
+            success:function (data) {
+                showlist(type);
             }
         });
     }
