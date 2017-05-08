@@ -214,8 +214,9 @@ class KangshifuController extends Controller
 		];
 		$fromStatus = $map[$type][$result][0];
 		$toStatus = $map[$type][$result][1];
-		$fromKey = self::KSF_PREFIX."$type:$fromStatus:$mobile";
-		$toKey = self::KSF_PREFIX."$type:$toStatus:$mobile";
+		$DorH = $type/10;//订单 or 活力
+		$fromKey = self::KSF_PREFIX."$DorH:$fromStatus:$mobile";
+		$toKey = self::KSF_PREFIX."$DorH:$toStatus:$mobile";
 
 		$timestamp = $cRedis->zscore($fromKey, $url);
 		$cRedis->zrem($fromKey, $url);
