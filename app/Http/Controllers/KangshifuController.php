@@ -15,6 +15,7 @@ class KangshifuController extends Controller
 {
 	const KSF_PREFIX = 'ksf:';
 	const KSF_NOTICE_PREFIX = 'notice:';
+	const KSF_LOTTERY_PREFIX = 'lottery:';
 	const KSF_COOKIE = 'ksf_mobile';
 	//1 订单 2 活力时刻  1待审核 2通过 3不通过 1不进墙 2进墙
 
@@ -325,5 +326,52 @@ class KangshifuController extends Controller
 	public function getManage(Request $req)
 	{
 		return view('kangshifu', []);
+	}
+
+	public function getLottery(Request $req)
+	{
+		$lotteryId = 0;
+		$mobile = $this->getMobile($req);
+		if (!empty($mobile))
+		{
+			$cRedis = \Redis::connection();
+			$huoli = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_HUOLI);
+			if ($huoli > 72)
+			{
+				$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
+
+				$turnTable = [1, 2, 3];
+				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
+				$random = rand(1, $rateSum);
+				$tmp = 0;
+				foreach ($turnTable as $key=>$rate)
+				{
+					if ($random <= $rate+$tmp)
+					{
+						//中奖
+						$lotteryId = $key + 1;
+						$timestamp = (new \DateTime("now"))->getTimestamp();
+						$cRedis->zadd(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, $timestamp, $lotteryId);
+						break;
+					}
+					else
+					{
+						$tmp += $rate;
+					}
+				}
+			}
+		}
+		return Util::getSuccessJson("success", ['result'=>$lotteryId]);
+	}
+	public function getLotteryResult(Request $req)
+	{
+		$list = [];
+		$mobile = $this->getMobile($req);
+		if (!empty($mobile))
+		{
+			$cRedis = \Redis::connection();
+			$list = $cRedis->zrevrange(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 0, -1);
+		}
+		return Util::getSuccessJson("success", ['list'=>$list]);
 	}
 }
