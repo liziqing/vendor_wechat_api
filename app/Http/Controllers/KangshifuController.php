@@ -152,7 +152,7 @@ class KangshifuController extends Controller
 			$huoli = $cRedis->hget(self::KSF_PREFIX . $mobile, self::USER_HUOLI);
 		}
 		if (empty($huoli)) $huoli = 0;
-		return Util::getSuccessJson("success", ['value'=>$huoli]);
+		return Util::getSuccessJson("success", ['value'=>intval($huoli)]);
 	}
 	public function postImageUp(Request $req)
 	{
