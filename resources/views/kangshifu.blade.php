@@ -83,13 +83,15 @@
                 var cyc = 0;
                 var coverLine = '';
                 var list = data.data.list;
-                for (var mobile in list)
+                for (var i in list)
                 {
-                    coverLine += "<td>"+mobile+"</td>";
-                    var oneData = list[mobile];
-                    for (var i in oneData)
+                    coverLine = '';
+                    coverLine += "<td>"+list[i]['mobile']+" || </td>";
+                    coverLine += "<td>"+list[i]['name']+" || </td>";
+                    var oneData = list['prize'];
+                    for (var j in oneData)
                     {
-                        coverLine += "<td>"+oneData[i]+"</td>";
+                        coverLine += "<td>"+oneData[j]+" , </td>";
                     }
                     $("#image_list").append("<tr>"+coverLine+"</tr>");
                 }

@@ -379,7 +379,25 @@ class KangshifuController extends Controller
 		}
 		else
 		{
-			$list = $this->getImageUrl(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+			$blurryKey = self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX;
+			$list = [];
+			$aPregOut = array();
+			$cRedis = \Redis::connection();
+			$zsetKeys = $cRedis->keys(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+			foreach ($zsetKeys as $zsetKey)
+			{
+				preg_match("/^$blurryKey(\d*)$/", $zsetKey, $aPregOut);
+				if (!empty($aPregOut[1]))
+				{
+					$mobile = $aPregOut[1];
+					$name = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_NAME);
+					$list[] = [
+						'mobile' => $mobile,
+						'name' => $name,
+						'prize' => $cRedis->zrevrange($zsetKey, 0, -1)
+					];
+				}
+			}
 			return Util::getSuccessJson("success", ['list'=>$list]);
 		}
 	}
