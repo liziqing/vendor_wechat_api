@@ -8,6 +8,9 @@
     <a href="javascript:void(0);" onclick="showlist('5')">已通过</a>
     <a href="javascript:void(0);" onclick="showlist('6')">不通过</a>
 </p>
+<p>
+    <a href="javascript:void(0);" onclick="showLottery()">中奖列表</a>
+</p>
 
 <div id="image_list"></div>
 
@@ -65,6 +68,31 @@
             url:"/kangshifu/change-status",
             success:function (data) {
                 showlist(type);
+            }
+        });
+    }
+    function showLottery() {
+        $("#image_list").html("");
+        $.ajax({
+            type:"get",
+            data:{},
+            dataType:"json",
+            url:"/kangshifu/lottery-result",
+            success:function (data) {
+                var oneLen = 5;
+                var cyc = 0;
+                var coverLine = '';
+                var list = data.data.list;
+                for (var mobile in list)
+                {
+                    coverLine += "<td>"+mobile+"</td>";
+                    var oneData = list[mobile];
+                    for (var i in oneData)
+                    {
+                        coverLine += "<td>"+oneData[i]+"</td>";
+                    }
+                    $("#image_list").append("<tr>"+coverLine+"</tr>");
+                }
             }
         });
     }

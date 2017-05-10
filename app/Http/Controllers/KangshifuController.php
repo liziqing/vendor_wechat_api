@@ -41,7 +41,7 @@ class KangshifuController extends Controller
 		return $mobile;
 	}
 	private function takeHuoLi($mobile, $type)
-	{
+	{//todo 加锁 全民活力值
 		//1活力照片 2分享 3观看TVC 4订单审核通过 5抽奖扣除
 		$cRedis = \Redis::connection();
 		if ($cRedis->exists(self::KSF_PREFIX.$mobile))
@@ -214,7 +214,7 @@ class KangshifuController extends Controller
 		return $urlList;
 	}
 	public function getImageList(Request $req)
-	{
+	{//todo 分页
 		$type = $req->input('type', 0);//1用户的活力时刻 2活力墙 3非墙全活力 订单审核（4未 5已 6不）
 		$offset = $req->input('offset', 0);
 		$limit = $req->input('limit', 20);
@@ -329,7 +329,7 @@ class KangshifuController extends Controller
 	}
 
 	public function getLottery(Request $req)
-	{
+	{//todo 加锁
 		$lotteryId = 0;
 		$mobile = $this->getMobile($req);
 		if (!empty($mobile))
@@ -340,7 +340,7 @@ class KangshifuController extends Controller
 			{
 				$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
-				$turnTable = [1, 2, 3];
+				$turnTable = [1, 5, 10]; //1、24号门票 2、21号门票 3、观看卷
 				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
 				$random = rand(1, $rateSum);
 				$tmp = 0;
@@ -361,6 +361,10 @@ class KangshifuController extends Controller
 				}
 			}
 		}
+		else
+		{
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
+		}
 		return Util::getSuccessJson("success", ['result'=>$lotteryId]);
 	}
 	public function getLotteryResult(Request $req)
@@ -371,7 +375,12 @@ class KangshifuController extends Controller
 		{
 			$cRedis = \Redis::connection();
 			$list = $cRedis->zrevrange(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 0, -1);
+			return Util::getSuccessJson("success", ['list'=>$list]);
 		}
-		return Util::getSuccessJson("success", ['list'=>$list]);
+		else
+		{
+			$list = $this->getImageUrl(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+			return Util::getSuccessJson("success", ['list'=>$list]);
+		}
 	}
 }
