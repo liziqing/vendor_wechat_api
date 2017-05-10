@@ -104,6 +104,8 @@ class KangshifuController extends Controller
 	public function getHaveWatch(Request $req)
 	{
 		$mobile = $this->getMobile($req);
+		if (empty($mobile))
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
 		$this->takeHuoLi($mobile, 3);
 		return Util::getSuccessJson("success", []);
 	}
@@ -117,7 +119,7 @@ class KangshifuController extends Controller
 
 		return Util::getSuccessJson("success", ['token'=>$token]);
 	}
-	public function postUpUserInfo(Request $req)
+	public function anyUpUserInfo(Request $req)
 	{
 		$name = $req->input('name', '');
 		$mobile = $req->input('mobile', '');
@@ -155,7 +157,7 @@ class KangshifuController extends Controller
 		if (empty($huoli)) $huoli = 0;
 		return Util::getSuccessJson("success", ['value'=>intval($huoli)]);
 	}
-	public function postImageUp(Request $req)
+	public function anyImageUp(Request $req)
 	{
 //		$noCookie = false;
 		$cRedis = \Redis::connection();
