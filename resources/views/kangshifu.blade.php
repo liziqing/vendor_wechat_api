@@ -88,7 +88,7 @@
                     coverLine = '';
                     coverLine += "<td>"+list[i]['mobile']+" || </td>";
                     coverLine += "<td>"+list[i]['name']+" || </td>";
-                    var oneData = list['prize'];
+                    var oneData = list[i]['prize'];
                     for (var j in oneData)
                     {
                         coverLine += "<td>"+oneData[j]+" , </td>";
