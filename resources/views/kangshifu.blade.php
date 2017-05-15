@@ -88,11 +88,13 @@
                     coverLine = '';
                     coverLine += "<td>"+list[i]['mobile']+" || </td>";
                     coverLine += "<td>"+list[i]['name']+" || </td>";
+                    coverLine += "<td>";
                     var oneData = list[i]['prize'];
                     for (var j in oneData)
                     {
-                        coverLine += "<td>"+oneData[j]+" , </td>";
+                        coverLine += oneData[j]+" , ";
                     }
+                    coverLine += "</td>";
                     $("#image_list").append("<tr>"+coverLine+"</tr>");
                 }
             }

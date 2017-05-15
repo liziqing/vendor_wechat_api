@@ -111,7 +111,7 @@ class KangshifuController extends Controller
 				if (!empty($aPregOut[1]))
 				{
 					$mobile = $aPregOut[1];
-					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 9999);
+					$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 9999);
 				}
 			}
 		}
