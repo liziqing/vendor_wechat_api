@@ -100,4 +100,29 @@ class WeixinController extends Controller
             return Util::getErrorJson($se->getCode(), $se->getMessage());
         }
     }
+
+    public function getKsfSig(Request $request)
+    {
+        try{
+            $ws = new WxService('ksf');
+
+            $nonceStr = $ws->generateNonceStr();//$request->getParameter('nonceStr');
+            $url = urldecode($request->input('url'));
+            $timestamp = strval(time());
+
+            $signature = $ws->getSignature($timestamp, $nonceStr, $url);
+
+            $data = array(
+                'nonceStr' => $nonceStr,
+                //'url' => $url,
+                'timestamp' => $timestamp,
+                'signature' => $signature
+            );
+
+            return Util::getSuccessJson('success', $data);
+        }catch(SMException $se)
+        {
+            return Util::getErrorJson($se->getCode(), $se->getMessage());
+        }
+    }
 }

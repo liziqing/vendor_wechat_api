@@ -12,6 +12,7 @@ class WxService{
     const API_BASE_URL = 'https://api.weixin.qq.com/';
     const UPLOAD_PIC_URL = 'http://file.api.weixin.qq.com/cgi-bin/media/upload';
 
+    protected $alias = '';
     protected $appId = 'wxe5613adadd2e9d16';
     protected $appSecret = '8553bf7429487a1aacd32df0a688c3aa';
 
@@ -55,6 +56,7 @@ class WxService{
 
     public function __construct($alias)
     {
+        $this->alias = $alias;
         if(isset(self::$aliasMap[$alias]))
         {
             $this->appId = self::$aliasMap[$alias]['appid'];
@@ -199,12 +201,21 @@ class WxService{
     }
 
     public function getSignature($timestamp, $nonstr, $url) {
-        $ticketType = 'jsapi';
+        if ('ksf' == $this->alias)
+        {
+            $ticket = $this->getgetKsfTicket();
+        }
+        else
+        {
+            $ticketType = 'jsapi';
+            $ticket = $this->getApiTicket($ticketType);
+        }
+
         $data = array(
             "noncestr" => $nonstr,
             "url" => $url,
             "timestamp" => $timestamp,
-            "jsapi_ticket" => $this->getApiTicket($ticketType)
+            "jsapi_ticket" => $ticket//$this->getApiTicket($ticketType)
         );
 
         ksort($data, SORT_STRING);
@@ -240,6 +251,13 @@ class WxService{
         \Cache::put($cacheKey, $token, $expirs);
 
         return $token;
+    }
+
+    private function getgetKsfTicket()
+    {
+        $curl = new Curl();
+        $curl->get("http://ptsc.net-show.cn/CheckAll.ashx", ["actiontype"=>"GetJT"]);
+        return $curl->response;
     }
 
     public function getBaseUserinfo($openId)
