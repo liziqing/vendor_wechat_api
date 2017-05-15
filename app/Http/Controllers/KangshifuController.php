@@ -46,6 +46,7 @@ class KangshifuController extends Controller
 	private function takeHuoLi($mobile, $type)
 	{//todo 加锁 全民活力值
 		//1活力照片 2分享 3观看TVC 4订单审核通过 5抽奖扣除
+		$code = 2; //1成功获得活力值 2未能获得
 		$cRedis = \Redis::connection();
 		if ($cRedis->exists(self::KSF_PREFIX.$mobile))
 		{
@@ -57,6 +58,7 @@ class KangshifuController extends Controller
 					{
 						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile);
 						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 20);
+						$code = 1;
 					}
 					break;
 				}
@@ -66,6 +68,7 @@ class KangshifuController extends Controller
 					{
 						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile);
 						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 4);
+						$code = 1;
 					}
 					break;
 				}
@@ -75,12 +78,14 @@ class KangshifuController extends Controller
 					{
 						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile);
 						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 12);
+						$code = 1;
 					}
 					break;
 				}
 				case 4:
 				{
 					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 72);
+					$code = 1;
 					break;
 				}
 				default:
@@ -89,6 +94,7 @@ class KangshifuController extends Controller
 				}
 			}
 		}
+		return $code;
 	}
 	public static function clearLockDaily()
 	{
@@ -120,8 +126,8 @@ class KangshifuController extends Controller
 	public function getHaveShare(Request $req)
 	{
 		$mobile = $this->getMobile($req);
-		$this->takeHuoLi($mobile, 2);
-		return Util::getSuccessJson("success", []);
+		$code = $this->takeHuoLi($mobile, 2);
+		return Util::getSuccessJson("success", ['code' => $code]);
 	}
 	public function getHaveWatch(Request $req)
 	{
@@ -206,9 +212,9 @@ class KangshifuController extends Controller
 		$cRedis->zadd($zkey, $timestamp, $url);
 
 		if (2 == $type)
-			$this->takeHuoLi($mobile, 1);
+			$code = $this->takeHuoLi($mobile, 1);
 
-		return Util::getSuccessJson("success", []);
+		return Util::getSuccessJson("success", ['code' => isset($code)? $code: 2]);
 		/*if ($noCookie)
 		{
 			return Util::getSuccessJson("success", []);
