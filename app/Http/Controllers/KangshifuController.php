@@ -99,6 +99,23 @@ class KangshifuController extends Controller
 		$cRedis->del(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
 		$cRedis->del(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE);
 	}
+	public static function setAllHuoli()
+	{
+		$cRedis = \Redis::connection();
+		$allKeys = $cRedis->keys(self::KSF_PREFIX.'*');
+		foreach ($allKeys as $oneKey)
+		{
+
+			if (preg_match("/^".self::KSF_PREFIX."(\d*)$/", $oneKey, $aPregOut))
+			{
+				if (!empty($aPregOut[1]))
+				{
+					$mobile = $aPregOut[1];
+					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 9999);
+				}
+			}
+		}
+	}
 
 	public function getHaveShare(Request $req)
 	{
@@ -358,6 +375,7 @@ class KangshifuController extends Controller
 					$turnTable[3] += $turnTable[1];
 					$turnTable[1] = 0;
 				}
+				$turnTable = [1, 1, 1, 0];
 				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
 				$random = rand(1, $rateSum);
 				$tmp = 0;
