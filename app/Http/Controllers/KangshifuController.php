@@ -25,6 +25,9 @@ class KangshifuController extends Controller
 	const USER_HAVE_SHARE = 'have_share';
 	const USER_HAVE_WATCH = 'have_watch';
 
+	const HAVE_FIRST_PRIZE = 'have_first_prize';
+	const HAVE_SECOND_PRIZE = 'have_second_prize';
+
 	private function delDb()
 	{
 		$cRedis = \Redis::connection();
@@ -93,6 +96,8 @@ class KangshifuController extends Controller
 		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_PHOTO);
 		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_SHARE);
 		$cRedis->del(self::KSF_PREFIX.self::USER_HAVE_WATCH);
+		$cRedis->del(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
+		$cRedis->del(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE);
 	}
 
 	public function getHaveShare(Request $req)
@@ -342,7 +347,17 @@ class KangshifuController extends Controller
 			{
 				$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
-				$turnTable = [1, 5, 10]; //1、24号门票 2、21号门票 3、观看卷
+				$turnTable = [4, 6, 25, 65]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
+				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE))
+				{
+					$turnTable[3] += $turnTable[0];
+					$turnTable[0] = 0;
+				}
+				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE))
+				{
+					$turnTable[3] += $turnTable[1];
+					$turnTable[1] = 0;
+				}
 				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
 				$random = rand(1, $rateSum);
 				$tmp = 0;
@@ -350,6 +365,10 @@ class KangshifuController extends Controller
 				{
 					if ($random <= $rate+$tmp)
 					{
+						if (0 == $key)
+							$cRedis->set(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE, 1);
+						elseif (1 == $key)
+							$cRedis->set(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE, 1);
 						//中奖
 						$lotteryId = $key + 1;
 						$timestamp = (new \DateTime("now"))->getTimestamp();
