@@ -46,7 +46,7 @@
 
                         if (oneLen <= cyc++)
                         {
-                            $("#image_list").append("<tr>+coverLine+</tr>");
+                            $("#image_list").append("<tr>"+coverLine+"</tr>");
                             cyc = 0;
                             coverLine = '';
                         }
