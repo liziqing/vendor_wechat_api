@@ -84,6 +84,7 @@ class KangshifuController extends Controller
 				}
 				case 4:
 				{
+					$this->takePrize($mobile, 3);
 					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 72);
 					$code = 1;
 					break;
@@ -399,8 +400,7 @@ class KangshifuController extends Controller
 							$cRedis->set(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE, 1);
 						//中奖
 						$lotteryId = $key + 1;
-						$timestamp = (new \DateTime("now"))->getTimestamp();
-						$cRedis->zadd(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, $timestamp, $lotteryId);
+						$this->takePrize($mobile, $lotteryId);
 						break;
 					}
 					else
@@ -415,6 +415,13 @@ class KangshifuController extends Controller
 			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
 		}
 		return Util::getSuccessJson("success", ['result'=>$lotteryId]);
+	}
+	private function takePrize($mobile, $lotteryId)
+	{
+		//1、24号门票 2、21号门票 3、观看卷 4、未中奖
+		$cRedis = \Redis::connection();
+		$timestamp = (new \DateTime("now"))->getTimestamp();
+		$cRedis->zadd(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, $timestamp, $lotteryId);
 	}
 	public function getLotteryResult(Request $req)
 	{
