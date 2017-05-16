@@ -206,6 +206,8 @@ class KangshifuController extends Controller
 
 		$type = $req->input('type', 2);//1订单 2活力时刻
 		$url = $req->input('url', '');
+		if (empty($url))
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "未上传照片");
 
 		$zkey = self::KSF_PREFIX."$type:1:$mobile";//1待审核 不进墙
 		$timestamp = (new \DateTime("now"))->getTimestamp();
@@ -371,12 +373,14 @@ class KangshifuController extends Controller
 				$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
 				$turnTable = [4, 6, 25, 65]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
-				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE))
+				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE) ||
+					$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 1))
 				{
 					$turnTable[3] += $turnTable[0];
 					$turnTable[0] = 0;
 				}
-				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE))
+				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE) ||
+					$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 2))
 				{
 					$turnTable[3] += $turnTable[1];
 					$turnTable[1] = 0;
