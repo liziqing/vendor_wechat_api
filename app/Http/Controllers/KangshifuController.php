@@ -127,6 +127,14 @@ class KangshifuController extends Controller
 	public function getHaveShare(Request $req)
 	{
 		$mobile = $this->getMobile($req);
+		if (empty($mobile))
+			;//return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
+		else
+		{
+			$cRedis = \Redis::connection();
+			if (!$cRedis->exists(self::KSF_PREFIX.$mobile))
+				$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 0);
+		}
 		$code = $this->takeHuoLi($mobile, 2);
 		return Util::getSuccessJson("success", ['code' => $code]);
 	}
@@ -135,6 +143,12 @@ class KangshifuController extends Controller
 		$mobile = $this->getMobile($req);
 		if (empty($mobile))
 			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, "请填写手机号");
+		else
+		{
+			$cRedis = \Redis::connection();
+			if (!$cRedis->exists(self::KSF_PREFIX.$mobile))
+				$cRedis->hset(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 0);
+		}
 		$this->takeHuoLi($mobile, 3);
 		return Util::getSuccessJson("success", []);
 	}
