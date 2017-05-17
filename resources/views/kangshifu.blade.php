@@ -69,8 +69,8 @@
                 if (0 !== coverLine.length) {
                     $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                 }
-                start += 2;
-                $("#image_list").append("<a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a>");
+                start = parseInt(start) + 2;
+                $("#image_list").append("<tr><td><a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a></td></tr>");
             }
         });
     }
