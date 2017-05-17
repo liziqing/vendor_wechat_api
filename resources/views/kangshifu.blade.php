@@ -11,7 +11,8 @@
 <p>
     <a href="javascript:void(0);" onclick="showLottery()">中奖列表</a>
 </p>
-
+{{--<span id="start_time">0</span>--}}
+<br /><br />
 <div id="image_list"></div>
 
 <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
@@ -21,9 +22,13 @@
     });
     function showlist(type) {
         $("#image_list").html("");
+//        $("#start_time").text(0);
+        appendShow(type, 0);
+    }
+    function appendShow(type, start) {
         $.ajax({
             type:"get",
-            data:{type:type,admin:1},
+            data:{type:type,admin:1,start:start},
             dataType:"json",
             url:"/kangshifu/image-list",
             success:function (data) {
@@ -66,6 +71,8 @@
                 }
             }
         });
+        start += 2;
+        $("#image_list").append("<a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a>");
     }
     function chgStatus(url, mobile, type, result) {
         var map = {2:22, 3:21, 4:11, 5:12, 6:13};
@@ -88,6 +95,7 @@
             dataType:"json",
             url:"/kangshifu/lottery-result",
             success:function (data) {
+                var map = {'1':'24号门票', '2':'21号门票', '3':'观看卷', '4':'未中奖'};
                 var oneLen = 5;
                 var cyc = 0;
                 var coverLine = '';
@@ -101,7 +109,7 @@
                     var oneData = list[i]['prize'];
                     for (var j in oneData)
                     {
-                        coverLine += oneData[j]+" , ";
+                        coverLine += map.oneData[j]+" , ";
                     }
                     coverLine += "</td>";
                     $("#image_list").append("<tr>"+coverLine+"</tr>");

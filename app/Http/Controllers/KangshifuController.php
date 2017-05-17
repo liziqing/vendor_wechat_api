@@ -242,7 +242,7 @@ class KangshifuController extends Controller
 			return Util::getSuccessJson("success", []);
 		}*/
 	}
-	private function getImageUrl($blurryKey)
+	private function getImageUrl($blurryKey, $start='+inf', $end='-inf')
 	{
 		$urlList = [];
 		$aPregOut = array();
@@ -256,7 +256,7 @@ class KangshifuController extends Controller
 				$mobile = $aPregOut[1];
 //				$urlList[$mobile] = $cRedis->zrevrange($zsetKey, 0, -1);
 				$urlList[$mobile] = [];
-				$adUrlTime = $cRedis->zrevrange($zsetKey, 0, -1, 'WITHSCORES');
+				$adUrlTime = $cRedis->zrevrange($zsetKey, $start, $end, 'WITHSCORES');
 				foreach ($adUrlTime as $url => $time)
 				{
 					$urlList[$mobile][] = [
@@ -274,7 +274,15 @@ class KangshifuController extends Controller
 		$type = $req->input('type', 0);//1用户的活力时刻 2活力墙 3非墙全活力 订单审核（4未 5已 6不）
 		$offset = $req->input('offset', 0);
 		$limit = $req->input('limit', 20);
+		$start = $req->input('start', 0);
 		$admin = $req->input('admin', 0);
+
+		$startDT = new \DateTime("now");
+		$startDT->sub(new \DateInterval('P'.$start.'D'));
+		$endDT = $startDT;
+		$endDT->sub(new \DateInterval('P1D'));
+		$startTS = (new \DateTime($startDT->format('Y-m-d').' 23:59:59'))->getTimestamp();
+		$endTS = (new \DateTime($endDT->format('Y-m-d').' 00:00:01'))->getTimestamp();
 
 		$urlList = [];
 		$cRedis = \Redis::connection();
@@ -297,11 +305,14 @@ class KangshifuController extends Controller
 			}
 			case 2:
 			{
-				$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:");//array_merge
 				if ($admin)
+				{
+					$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:", $startTS, $endTS);
 					$urlList = $urlListM;
+				}
 				else
 				{
+					$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:");//array_merge
 					foreach ($urlListM as $value)
 					{
 						foreach ($value as $one)
@@ -313,23 +324,23 @@ class KangshifuController extends Controller
 			}
 			case 3:
 			{
-				$urlList = $this->getImageUrl(self::KSF_PREFIX."2:1:");
+				$urlList = $this->getImageUrl(self::KSF_PREFIX."2:1:", $startTS, $endTS);
 				break;
 			}
 
 			case 4:
 			{
-				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:1:");
+				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:1:", $startTS, $endTS);
 				break;
 			}
 			case 5:
 			{
-				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:2:");
+				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:2:", $startTS, $endTS);
 				break;
 			}
 			case 6:
 			{
-				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:3:");
+				$urlList = $this->getImageUrl(self::KSF_PREFIX."1:3:", $startTS, $endTS);
 				break;
 			}
 			default:
