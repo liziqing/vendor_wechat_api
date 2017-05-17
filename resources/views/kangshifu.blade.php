@@ -69,10 +69,10 @@
                 if (0 !== coverLine.length) {
                     $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                 }
+                start += 2;
+                $("#image_list").append("<a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a>");
             }
         });
-        start += 2;
-        $("#image_list").append("<a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a>");
     }
     function chgStatus(url, mobile, type, result) {
         var map = {2:22, 3:21, 4:11, 5:12, 6:13};

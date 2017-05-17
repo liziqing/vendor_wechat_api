@@ -255,14 +255,17 @@ class KangshifuController extends Controller
 			{
 				$mobile = $aPregOut[1];
 //				$urlList[$mobile] = $cRedis->zrevrange($zsetKey, 0, -1);
-				$urlList[$mobile] = [];
 				$adUrlTime = $cRedis->zrevrangebyscore($zsetKey, $start, $end, 'WITHSCORES');
-				foreach ($adUrlTime as $url => $time)
+				if (!empty($adUrlTime))
 				{
-					$urlList[$mobile][] = [
-						'url' => $url,
-						'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
-					];
+					$urlList[$mobile] = [];
+					foreach ($adUrlTime as $url => $time)
+					{
+						$urlList[$mobile][] = [
+							'url' => $url,
+							'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
+						];
+					}
 				}
 			}
 //			$urlList = array_merge($urlList, $cRedis->zrevrange($zsetKey, 0, -1));
