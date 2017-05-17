@@ -261,7 +261,7 @@ class KangshifuController extends Controller
 				{
 					$urlList[$mobile][] = [
 						'url' => $url,
-						'time' => (new \DateTime($time))->format('Y-m-d H:i:s')
+						'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
 					];
 				}
 			}
