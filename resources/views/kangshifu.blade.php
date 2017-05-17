@@ -109,7 +109,7 @@
                     var oneData = list[i]['prize'];
                     for (var j in oneData)
                     {
-                        coverLine += map.oneData[j]+" , ";
+                        coverLine += map[oneData[j]]+" , ";
                     }
                     coverLine += "</td>";
                     $("#image_list").append("<tr>"+coverLine+"</tr>");
