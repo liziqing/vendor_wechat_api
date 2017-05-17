@@ -38,13 +38,14 @@
                     for (var i in oneData)
                     {
                         coverLine += "<td><img src='"+oneData[i].url+"' title='"+mobile+"' height='150'/></td>";
-                        titleLine += mobile + "  " + oneData[i].time;
+                        titleLine += "<td>" + mobile + "  " + oneData[i].time;
                         if (5 != type)
                         {
                             titleLine += "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
                                 "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 2)\">不通过</a>";
                         }
 //                        coverLine += "</td>";
+                        titleLine += "</td>";
 
                         if (oneLen <= cyc++)
                         {
