@@ -400,7 +400,7 @@ class KangshifuController extends Controller
 					$turnTable[3] += $turnTable[1];
 					$turnTable[1] = 0;
 				}
-				$turnTable = [1, 1, 1, 0];
+//				$turnTable = [1, 1, 1, 0];
 				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
 				$random = rand(1, $rateSum);
 				$tmp = 0;
