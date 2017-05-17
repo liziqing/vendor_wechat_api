@@ -30,7 +30,9 @@
                 var oneLen = 5;
                 var cyc = 0;
                 var coverLine = '';
-                var titleLine = '';
+                var titleLine1 = '';
+                var titleLine2 = '';
+                var titleLine3 = '';
                 var list = data.data.list;
                 for (var mobile in list)
                 {
@@ -38,18 +40,19 @@
                     for (var i in oneData)
                     {
                         coverLine += "<td><img src='"+oneData[i].url+"' title='"+mobile+"' height='150'/></td>";
-                        titleLine += "<td>" + mobile + "  " + oneData[i].time;
+                        titleLine1 += "<td>" + mobile + "</td>";
+                        titleLine2 += "<td>" + oneData[i].time + "</td>";
                         if (5 != type)
                         {
-                            titleLine += "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
-                                "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 2)\">不通过</a>";
+                            titleLine3 += "<td><a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
+                                "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 2)\">不通过</a></td>";
                         }
 //                        coverLine += "</td>";
-                        titleLine += "</td>";
+//                        titleLine += "</td>";
 
                         if (oneLen <= cyc++)
                         {
-                            $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine+"</tr>");
+                            $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                             cyc = 0;
                             coverLine = '';
                             titleLine = '';
