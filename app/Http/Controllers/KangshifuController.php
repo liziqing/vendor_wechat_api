@@ -280,12 +280,20 @@ class KangshifuController extends Controller
 		$start = $req->input('start', 0);
 		$admin = $req->input('admin', 0);
 
-		$startDT = new \DateTime("now");
-		$startDT->sub(new \DateInterval('P'.$start.'D'));
-		$endDT = $startDT;
-		$endDT->sub(new \DateInterval('P1D'));
-		$startTS = (new \DateTime($startDT->format('Y-m-d').' 23:59:59'))->getTimestamp();
-		$endTS = (new \DateTime($endDT->format('Y-m-d').' 00:00:01'))->getTimestamp();
+		if ('all' == $start)
+		{
+			$startTS = '+inf';
+			$endTS = '-inf';
+		}
+		else
+		{
+			$startDT = new \DateTime("now");
+			$startDT->sub(new \DateInterval('P'.$start.'D'));
+			$endDT = $startDT;
+			$endDT->sub(new \DateInterval('P1D'));
+			$startTS = (new \DateTime($startDT->format('Y-m-d').' 23:59:59'))->getTimestamp();
+			$endTS = (new \DateTime($endDT->format('Y-m-d').' 00:00:01'))->getTimestamp();
+		}
 
 		$urlList = [];
 		$cRedis = \Redis::connection();
