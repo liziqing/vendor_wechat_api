@@ -256,7 +256,7 @@ class KangshifuController extends Controller
 				$mobile = $aPregOut[1];
 //				$urlList[$mobile] = $cRedis->zrevrange($zsetKey, 0, -1);
 				$urlList[$mobile] = [];
-				$adUrlTime = $cRedis->zrevrange($zsetKey, $start, $end, 'WITHSCORES');
+				$adUrlTime = $cRedis->zrevrangebyscore($zsetKey, $start, $end, 'WITHSCORES');
 				foreach ($adUrlTime as $url => $time)
 				{
 					$urlList[$mobile][] = [
