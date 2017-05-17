@@ -30,30 +30,33 @@
                 var oneLen = 5;
                 var cyc = 0;
                 var coverLine = '';
+                var titleLine = '';
                 var list = data.data.list;
                 for (var mobile in list)
                 {
                     var oneData = list[mobile];
                     for (var i in oneData)
                     {
-                        coverLine += "<td><img src='"+oneData[i]+"' title='"+mobile+"' height='150'/>";
+                        coverLine += "<td><img src='"+oneData[i].url+"' title='"+mobile+"' height='150'/></td>";
+                        titleLine += mobile + "  " + oneData[i].time;
                         if (5 != type)
                         {
-                            coverLine += "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
-                                "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i]+"', '"+mobile+"', "+type+", 2)\">不通过</a>";
+                            titleLine += "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 1)\">通过</a>--" +
+                                "<a href='javascript:void(0);' onclick=\"chgStatus('"+oneData[i].url+"', '"+mobile+"', "+type+", 2)\">不通过</a>";
                         }
-                        coverLine += "</td>";
+//                        coverLine += "</td>";
 
                         if (oneLen <= cyc++)
                         {
-                            $("#image_list").append("<tr>"+coverLine+"</tr>");
+                            $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine+"</tr>");
                             cyc = 0;
                             coverLine = '';
+                            titleLine = '';
                         }
                     }
                 }
                 if (0 !== coverLine.length) {
-                    $("#image_list").append("<tr>"+coverLine+"</tr>");
+                    $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine+"</tr>");
                 }
             }
         });
