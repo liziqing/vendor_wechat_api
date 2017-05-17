@@ -55,12 +55,14 @@
                             $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                             cyc = 0;
                             coverLine = '';
-                            titleLine = '';
+                            titleLine1 = '';
+                            titleLine2 = '';
+                            titleLine3 = '';
                         }
                     }
                 }
                 if (0 !== coverLine.length) {
-                    $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine+"</tr>");
+                    $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                 }
             }
         });
