@@ -289,8 +289,10 @@ class KangshifuController extends Controller
 		{
 			$startDT = new \DateTime("now");
 			$startDT->sub(new \DateInterval('P'.$start.'D'));
-			$endDT = $startDT;
+
+			$endDT = new \DateTime($startDT->format('Y-m-d'));
 			$endDT->sub(new \DateInterval('P1D'));
+
 			$startTS = (new \DateTime($startDT->format('Y-m-d').' 23:59:59'))->getTimestamp();
 			$endTS = (new \DateTime($endDT->format('Y-m-d').' 00:00:01'))->getTimestamp();
 		}
