@@ -70,7 +70,7 @@
                     $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                 }
                 start = parseInt(start) + 2;
-                $("#image_list").append("<tr><td><a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">Next>></a></td></tr>");
+                $("#image_list").append("<tr><td><a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">后两天>></a></td></tr>");
             }
         });
     }
