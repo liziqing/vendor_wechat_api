@@ -32,7 +32,8 @@ class KsfTmp extends Command
 	 */
 	public function handle()
 	{
-		KangshifuController::setAllHuoli();
+//		KangshifuController::setAllHuoli();
+		KangshifuController::delDb();
 		return;
 	}
 }

@@ -29,7 +29,7 @@ class KangshifuController extends Controller
 	const HAVE_SECOND_PRIZE = 'have_second_prize';
 	const HAVE_THIRD_PRIZE = 'have_third_prize';
 
-	private function delDb()
+	public static function delDb()
 	{
 		$cRedis = \Redis::connection();
 		$asHashKey = $cRedis->keys(self::KSF_PREFIX.'*');
