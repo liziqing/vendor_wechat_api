@@ -27,6 +27,7 @@ class KangshifuController extends Controller
 
 	const HAVE_FIRST_PRIZE = 'have_first_prize';
 	const HAVE_SECOND_PRIZE = 'have_second_prize';
+	const HAVE_THIRD_PRIZE = 'have_third_prize';
 
 	private function delDb()
 	{
@@ -435,7 +436,7 @@ class KangshifuController extends Controller
 				{
 					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
-					$turnTable = [15, 15, 50, 20]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
+					$turnTable = [20, 20, 50, 10]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
 					$havenFirst = $cRedis->get(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
 					if ((!empty($havenFirst) && intval($havenFirst) >= 2) ||
 						$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 1))
@@ -449,6 +450,11 @@ class KangshifuController extends Controller
 					{
 						$turnTable[3] += $turnTable[1];
 						$turnTable[1] = 0;
+					}
+					if ($cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 3))
+					{
+						$turnTable[3] += $turnTable[2];
+						$turnTable[2] = 0;
 					}
 	//				$turnTable = [1, 1, 1, 0];
 					$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
