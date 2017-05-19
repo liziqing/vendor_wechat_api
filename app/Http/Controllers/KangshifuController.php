@@ -47,54 +47,64 @@ class KangshifuController extends Controller
 	{//todo 加锁 全民活力值
 		//1活力照片 2分享 3观看TVC 4订单审核通过 5抽奖扣除
 		$code = 2; //1成功获得活力值 2未能获得
-		$cRedis = \Redis::connection();
-		if ($cRedis->exists(self::KSF_PREFIX.$mobile))
+		$lockKey = "".__METHOD__.$mobile."||".$type;
+		try
 		{
-			switch ($type)
+			Util::redisLock($lockKey);
+			$cRedis = \Redis::connection();
+			if ($cRedis->exists(self::KSF_PREFIX.$mobile))
 			{
-				case 1:
+				switch ($type)
 				{
-					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile))
+					case 1:
 					{
-						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile);
-						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 20);
-						$code = 1;
+						if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile))
+						{
+							$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_PHOTO, $mobile);
+							$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 20);
+							$code = 1;
+						}
+						break;
 					}
-					break;
-				}
-				case 2:
-				{
-					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile))
+					case 2:
 					{
-						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile);
-						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 4);
-						$code = 1;
+						if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile))
+						{
+							$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_SHARE, $mobile);
+							$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 4);
+							$code = 1;
+						}
+						break;
 					}
-					break;
-				}
-				case 3:
-				{
-					if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile))
+					case 3:
 					{
-						$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile);
-						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 12);
-						$code = 1;
+						if (!$cRedis->sismember(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile))
+						{
+							$cRedis->sadd(self::KSF_PREFIX.self::USER_HAVE_WATCH, $mobile);
+							$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 12);
+							$code = 1;
+						}
+						break;
 					}
-					break;
-				}
-				case 4:
-				{
-					$this->takePrize($mobile, 3);
-					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 72);
-					$code = 1;
-					break;
-				}
-				default:
-				{
-					break;
+					case 4:
+					{
+						$this->takePrize($mobile, 3);
+						$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, 72);
+						$code = 1;
+						break;
+					}
+					default:
+					{
+						break;
+					}
 				}
 			}
 		}
+		catch (\Exception $e)
+		{
+			\Log::error('kangshifu taken huoli err:'.$e->getMessage());
+		}
+		Util::redisUnlock($lockKey);
 		return $code;
 	}
 	public static function clearLockDaily()
@@ -415,48 +425,56 @@ class KangshifuController extends Controller
 		$mobile = $this->getMobile($req);
 		if (!empty($mobile))
 		{
-			$cRedis = \Redis::connection();
-			$huoli = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_HUOLI);
-			if ($huoli > 72)
+			$lockKey = "".__METHOD__.$mobile;
+			try
 			{
-				$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
+				Util::redisLock($lockKey);
+				$cRedis = \Redis::connection();
+				$huoli = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_HUOLI);
+				if ($huoli > 72)
+				{
+					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
-				$turnTable = [4, 6, 25, 65]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
-				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE) ||
-					$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 1))
-				{
-					$turnTable[3] += $turnTable[0];
-					$turnTable[0] = 0;
-				}
-				if ($cRedis->exists(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE) ||
-					$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 2))
-				{
-					$turnTable[3] += $turnTable[1];
-					$turnTable[1] = 0;
-				}
-//				$turnTable = [1, 1, 1, 0];
-				$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
-				$random = rand(1, $rateSum);
-				$tmp = 0;
-				foreach ($turnTable as $key=>$rate)
-				{
-					if ($random <= $rate+$tmp)
+					$turnTable = [15, 15, 50, 20]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
+					$havenFirst = $cRedis->get(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
+					if ((!empty($havenFirst) && intval($havenFirst) >= 2) ||
+						$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 1))
 					{
-						if (0 == $key)
-							$cRedis->set(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE, 1);
-						elseif (1 == $key)
-							$cRedis->set(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE, 1);
-						//中奖
-						$lotteryId = $key + 1;
-						$this->takePrize($mobile, $lotteryId);
-						break;
+						$turnTable[3] += $turnTable[0];
+						$turnTable[0] = 0;
 					}
-					else
+					$havenSecond = $cRedis->get(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE);
+					if ((!empty($havenSecond) && intval($havenSecond) >= 2) ||
+						$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 2))
 					{
-						$tmp += $rate;
+						$turnTable[3] += $turnTable[1];
+						$turnTable[1] = 0;
+					}
+	//				$turnTable = [1, 1, 1, 0];
+					$rateSum = array_reduce($turnTable, function($out,$v){return $out+$v;}, 0);
+					$random = rand(1, $rateSum);
+					$tmp = 0;
+					foreach ($turnTable as $key=>$rate)
+					{
+						if ($random <= $rate+$tmp)
+						{
+							//中奖
+							$lotteryId = $key + 1;
+							$this->takePrize($mobile, $lotteryId);
+							break;
+						}
+						else
+						{
+							$tmp += $rate;
+						}
 					}
 				}
 			}
+			catch (\Exception $e)
+			{
+				\Log::error('kangshifu lottery prize err:'.$e->getMessage());
+			}
+			Util::redisUnlock($lockKey);
 		}
 		else
 		{
@@ -468,6 +486,12 @@ class KangshifuController extends Controller
 	{
 		//1、24号门票 2、21号门票 3、观看卷 4、未中奖
 		$cRedis = \Redis::connection();
+
+		if (1 == $lotteryId)
+			$cRedis->incr(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
+		elseif (2 == $lotteryId)
+			$cRedis->incr(self::KSF_PREFIX.self::HAVE_SECOND_PRIZE);
+
 		$timestamp = (new \DateTime("now"))->getTimestamp();
 		$cRedis->zadd(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, $timestamp, $lotteryId);
 	}

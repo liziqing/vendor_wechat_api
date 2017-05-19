@@ -41,4 +41,18 @@ class Util
         $data = ["code" => $code, "message" => $error];
         return self::getJson($data,Request::input("format","json"),Request::input("callback","callback"));
     }
+
+    public static function redisLock($key, $secs=5)
+    {
+        $cRedis = \Redis::connection();
+        $result = $cRedis->setnx($key, time() + $secs + 1);
+        $cRedis->expire($key, $secs);
+        return $result;
+    }
+
+    public static function redisUnlock($key)
+    {
+        $cRedis = \Redis::connection();
+        $cRedis->del($key);
+    }
 }
