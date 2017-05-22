@@ -331,7 +331,7 @@ class KangshifuController extends Controller
 			{
 				if ($admin)
 				{
-					$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:", $startTS, $endTS);
+					$urlListM = $this->getImageUrl(self::KSF_PREFIX."2:2:");//, $startTS, $endTS);
 					$urlList = $urlListM;
 				}
 				else
