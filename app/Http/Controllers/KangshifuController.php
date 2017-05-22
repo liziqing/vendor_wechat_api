@@ -535,4 +535,87 @@ class KangshifuController extends Controller
 			return Util::getSuccessJson("success", ['list'=>$list]);
 		}
 	}
+	public function getLotteryExcel(Request $req)
+	{
+		Excel::create("Lottery", function($excel){
+			$excel->sheet('24',function($sheet){
+
+				$sheet->appendRow(['手机号', '姓名']);
+
+				$blurryKey = self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX;
+				$aPregOut = array();
+				$cRedis = \Redis::connection();
+				$zsetKeys = $cRedis->keys(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+				foreach ($zsetKeys as $zsetKey)
+				{
+					preg_match("/^$blurryKey(\d*)$/", $zsetKey, $aPregOut);
+					if (!empty($aPregOut[1]))
+					{
+						$aPrize = $cRedis->zrevrange($zsetKey, 0, -1);
+						foreach ($aPrize as $prize)
+						{
+							if (1 == $prize)
+							{
+								$mobile = $aPregOut[1];
+								$name = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_NAME);
+								$sheet->appendRow([$mobile, $name]);
+							}
+						}
+					}
+				}
+			});
+			$excel->sheet('21',function($sheet){
+
+				$sheet->appendRow(['手机号', '姓名']);
+
+				$blurryKey = self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX;
+				$aPregOut = array();
+				$cRedis = \Redis::connection();
+				$zsetKeys = $cRedis->keys(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+				foreach ($zsetKeys as $zsetKey)
+				{
+					preg_match("/^$blurryKey(\d*)$/", $zsetKey, $aPregOut);
+					if (!empty($aPregOut[1]))
+					{
+						$aPrize = $cRedis->zrevrange($zsetKey, 0, -1);
+						foreach ($aPrize as $prize)
+						{
+							if (2 == $prize)
+							{
+								$mobile = $aPregOut[1];
+								$name = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_NAME);
+								$sheet->appendRow([$mobile, $name]);
+							}
+						}
+					}
+				}
+			});
+			$excel->sheet('watch',function($sheet){
+
+				$sheet->appendRow(['手机号', '姓名']);
+
+				$blurryKey = self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX;
+				$aPregOut = array();
+				$cRedis = \Redis::connection();
+				$zsetKeys = $cRedis->keys(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.'*');
+				foreach ($zsetKeys as $zsetKey)
+				{
+					preg_match("/^$blurryKey(\d*)$/", $zsetKey, $aPregOut);
+					if (!empty($aPregOut[1]))
+					{
+						$aPrize = $cRedis->zrevrange($zsetKey, 0, -1);
+						foreach ($aPrize as $prize)
+						{
+							if (3 == $prize)
+							{
+								$mobile = $aPregOut[1];
+								$name = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_NAME);
+								$sheet->appendRow([$mobile, $name]);
+							}
+						}
+					}
+				}
+			});
+		})->export('xls');
+	}
 }

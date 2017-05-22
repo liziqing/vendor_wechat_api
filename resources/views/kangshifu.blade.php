@@ -92,6 +92,7 @@
     }
     function showLottery() {
         $("#image_list").html("");
+        $("#image_list").append("<tr><td><a href=\"/kangshifu/lottery-excel\" >下载表格</a></td></tr>");
         $.ajax({
             type:"get",
             data:{},
