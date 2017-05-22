@@ -69,8 +69,11 @@
                 if (0 !== coverLine.length) {
                     $("#image_list").append("<tr>"+coverLine+"</tr> <tr>"+titleLine1+"</tr> <tr>"+titleLine2+"</tr> <tr>"+titleLine3+"</tr>");
                 }
-                start = parseInt(start) + 2;
-                $("#image_list").append("<tr><td><a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">后两天>></a></td></tr>");
+                if (2 != type)
+                {
+                    start = parseInt(start) + 2;
+                    $("#image_list").append("<tr><td><a href=\"javascript:void(0);\" onclick=\"appendShow(\'"+type+"\', \'"+start+"\')\">后两天>></a></td></tr>");
+                }
             }
         });
     }
