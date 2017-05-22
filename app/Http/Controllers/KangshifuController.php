@@ -273,7 +273,7 @@ class KangshifuController extends Controller
 					foreach ($adUrlTime as $url => $time)
 					{
 						$urlList[$mobile][] = [
-							'url' => urlencode($url),
+							'url' => $url,
 							'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
 						];
 					}
