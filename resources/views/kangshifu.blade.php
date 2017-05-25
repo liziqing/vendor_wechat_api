@@ -99,7 +99,7 @@
             dataType:"json",
             url:"/kangshifu/lottery-result",
             success:function (data) {
-                var map = {'1':'24号门票', '2':'21号门票', '3':'观看卷', '4':'未中奖'};
+                var map = {'1':'24号门票', '2':'10号门票', '3':'观看卷', '4':'未中奖'};
                 var oneLen = 5;
                 var cyc = 0;
                 var coverLine = '';
