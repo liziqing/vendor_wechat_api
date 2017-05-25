@@ -537,7 +537,7 @@ class KangshifuController extends Controller
 	}
 	public function getLotteryExcel(Request $req)
 	{
-		Excel::create("Lottery", function($excel){
+		\Excel::create("Lottery", function($excel){
 			$excel->sheet('24',function($sheet){
 
 				$sheet->appendRow(['手机号', '姓名']);
