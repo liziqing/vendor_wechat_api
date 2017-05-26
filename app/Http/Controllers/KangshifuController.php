@@ -287,7 +287,7 @@ class KangshifuController extends Controller
 	{//todo 分页
 		$type = $req->input('type', 0);//1用户的活力时刻 2活力墙 3非墙全活力 订单审核（4未 5已 6不）
 		$offset = $req->input('offset', 0);
-		$limit = $req->input('limit', 20);
+		$limit = $req->input('limit', 30);
 		$start = $req->input('start', 0);
 		$admin = $req->input('admin', 0);
 
@@ -342,6 +342,7 @@ class KangshifuController extends Controller
 						foreach ($value as $one)
 							$urlList[] = $one['url'];//array_merge($urlList, $value);
 					}
+					$urlList = array_slice($urlList, $offset ,$limit);
 				}
 //				$zkeyu = self::KSF_PREFIX."2:2";
 				break;
