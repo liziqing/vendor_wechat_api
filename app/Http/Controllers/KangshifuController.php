@@ -433,7 +433,7 @@ class KangshifuController extends Controller
 				Util::redisLock($lockKey);
 				$cRedis = \Redis::connection();
 				$huoli = $cRedis->hget(self::KSF_PREFIX.$mobile, self::USER_HUOLI);
-				if ($huoli > 72)
+				if ($huoli >= 72)
 				{
 					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
