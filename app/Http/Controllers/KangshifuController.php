@@ -273,7 +273,7 @@ class KangshifuController extends Controller
 					foreach ($adUrlTime as $url => $time)
 					{
 						$urlList[$mobile][] = [
-							'url' => str_replace('\\', '%5c', $url)//$url,
+							'url' => str_replace("\\", '%5c', $url),//$url,
 							'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
 						];
 					}
