@@ -273,7 +273,7 @@ class KangshifuController extends Controller
 					foreach ($adUrlTime as $url => $time)
 					{
 						$urlList[$mobile][] = [
-							'url' => str_replace("\\", '%5c', $url),//$url,
+							'url' => str_replace(['%',"\\"], ['%25','%5c'], $url),//$url,
 							'time' => date('Y-m-d H:i:s', $time)//(new \DateTime($time))->format('Y-m-d H:i:s')
 						];
 					}
@@ -378,7 +378,7 @@ class KangshifuController extends Controller
 	public function postChangeStatus(Request $req)
 	{
 		$url = $req->input('url', 0);
-		$url = str_replace('%5c', "\\", $url);
+		$url = str_replace(['%5c','%25'], ["\\",'%'], $url);
 		$type = $req->input('type', 0);//11 12 13 21 22
 		$mobile = $req->input('mobile', '');
 		$result = $req->input('result', 0); //1通过 2不通过
