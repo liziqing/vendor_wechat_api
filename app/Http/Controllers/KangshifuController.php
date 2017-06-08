@@ -378,6 +378,7 @@ class KangshifuController extends Controller
 	public function postChangeStatus(Request $req)
 	{
 		$url = $req->input('url', 0);
+		$url = str_replace('%5c', "\\", $url);
 		$type = $req->input('type', 0);//11 12 13 21 22
 		$mobile = $req->input('mobile', '');
 		$result = $req->input('result', 0); //1通过 2不通过
