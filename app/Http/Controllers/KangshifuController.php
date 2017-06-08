@@ -438,7 +438,7 @@ class KangshifuController extends Controller
 				{
 					$cRedis->hincrby(self::KSF_PREFIX.$mobile, self::USER_HUOLI, -72);
 
-					$turnTable = [20, 0, 70, 10]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
+					$turnTable = [30, 0, 70, 0]; //1、24号门票 2、21号门票 3、观看卷 4、未中奖
 					$havenFirst = $cRedis->get(self::KSF_PREFIX.self::HAVE_FIRST_PRIZE);
 					if ((!empty($havenFirst) && intval($havenFirst) >= 4) ||
 						$cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 1))
