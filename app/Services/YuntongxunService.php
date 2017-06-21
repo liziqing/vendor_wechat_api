@@ -10,7 +10,7 @@ class YuntongxunService {
 	{
 		require_once(base_path("app/Services/sdk/CCPRestSDK.php"));///root/vendor_wechat_api/
 		$accountSid = 'aaf98f894d328b13014d6661f1de2560';
-		$accountToken = '3377fa13da7ab7b6946a55f6a71f32fd';
+		$accountToken = 'cc3436f2e735428cb1e642ce3cf78b00';
 		$appid = '8a216da85cb0540d015cc4f4df9605c4';
 		$serverHost = 'app.cloopen.com';
 		$serverPort = 8883;
