@@ -7,6 +7,7 @@
 namespace VendorWechat\Http\Controllers;
 
 use Illuminate\Http\Request;
+use VendorWechat\Services\YuntongxunService;
 use VendorWechat\Util\Util;
 use VendorWechat\Exceptions\ExceptionConstants;
 //use Qiniu\Auth;
@@ -21,6 +22,7 @@ class KangshifuController extends Controller
 
 	const USER_HUOLI = 'huo_li';
 	const USER_NAME  = 'name';
+	const USER_CODE  = 'code';
 	const USER_HAVE_PHOTO = 'have_photo';
 	const USER_HAVE_SHARE = 'have_share';
 	const USER_HAVE_WATCH = 'have_watch';
@@ -619,5 +621,61 @@ class KangshifuController extends Controller
 				}
 			});
 		})->export('xls');
+	}
+
+	public function getMobileCode(Request $req)
+	{
+		$mobile = $req->input('mobile', '');
+		if (false == self::canWatch($mobile))
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, '未中奖号码');
+
+		$code = self::getCode($mobile);
+		if (empty($code))
+			$code = self::generateCode($mobile);
+
+		if (!empty($code))
+			(new YuntongxunService())->sendSmsTemplate($mobile, [$code], 8888);
+
+		return Util::getSuccessJson("success", []);
+	}
+	public function getVerifyCode(Request $req)
+	{
+		$mobile = $req->input('mobile', '');
+		if (false == self::canWatch($mobile))
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, '未中奖号码');
+
+		$code = $req->input('code', '');
+		if (self::getCode($mobile) == $code)
+		{
+			return Util::getSuccessJson("success", ['url'=>'http://xxx']);
+		}
+		else
+		{
+			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, ExceptionConstants::MSG_VERIFY_CODE_ERROR);
+		}
+	}
+	private static function generateCode($mobile)
+	{
+		$code = mt_rand(100000, 999999);
+
+		$cRedis = \Redis::connection();
+		$codeKey = self::KSF_PREFIX.$mobile.':'.self::USER_CODE;
+		$result = $cRedis->setnx($codeKey, $code);
+		if (1 == $result)
+			$cRedis->expire($codeKey, 60*15);
+		else
+			$code = 0;
+		return $code;
+	}
+	private static function getCode($mobile)
+	{
+		$cRedis = \Redis::connection();
+		return $cRedis->get(self::KSF_PREFIX.$mobile.':'.self::USER_CODE);
+	}
+	private static function canWatch($mobile)
+	{
+		$cRedis = \Redis::connection();
+		$time = $cRedis->zscore(self::KSF_PREFIX.self::KSF_LOTTERY_PREFIX.$mobile, 3);
+		return empty($time)? false: true;
 	}
 }
