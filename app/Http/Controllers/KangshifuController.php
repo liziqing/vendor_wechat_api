@@ -634,7 +634,8 @@ class KangshifuController extends Controller
 			$code = self::generateCode($mobile);
 
 		if (!empty($code))
-			(new YuntongxunService())->sendSmsTemplate($mobile, [$code], 8888);
+			(new YuntongxunService())->sendSmsKsf($mobile, $code);
+//			(new YuntongxunService())->sendSmsTemplate($mobile, [$code], 8888);
 
 		return Util::getSuccessJson("success", []);
 	}

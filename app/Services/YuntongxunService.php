@@ -1,5 +1,6 @@
 <?php namespace VendorWechat\Services;
 
+use Curl\Curl;
 use VendorWechat\Exceptions\SMException;
 use VendorWechat\Exceptions\ExceptionConstants;
 
@@ -46,6 +47,25 @@ class YuntongxunService {
 			//echo "smsMessageSid:".$smsmessage->smsMessageSid."<br/>";
 			//TODO 添加成功处理逻辑
 		}
+	}
+
+	public function sendSmsKsf($mobile, $code)
+	{
+		$cCurl = new Curl();
+		$dParam = [
+			'username' => 'kangshifu',
+			'password' => strtolower(md5('Ksf073#&')),
+			'mobile' => $mobile,
+			'content' => '动态兑换码：'.$code.'，请在15分钟内填写',
+			'productid' => '676767',
+			'xh' => ''
+		];
+		$cCurl->get('http://www.ztsms.cn/sendSms.do', $dParam);
+		if ($cCurl->error)
+		{
+			\Log::error('RESULT: ' . $cCurl->errorCode . ': ' . $cCurl->errorMessage);
+		}
+		\log::error('ksf sm rsp:'.var_export($cCurl->response,true));
 	}
 
 }
