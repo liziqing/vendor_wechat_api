@@ -646,7 +646,7 @@ class KangshifuController extends Controller
 			return Util::getErrorJson(ExceptionConstants::CODE_PARAM, '未中奖号码');
 
 		$code = $req->input('code', '');
-		if (self::getCode($mobile) == $code)
+		if (self::getCode($mobile) === $code)
 		{
 			return Util::getSuccessJson("success", ['url'=>'http://xxx']);
 		}
