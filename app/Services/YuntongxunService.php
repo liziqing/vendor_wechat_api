@@ -56,7 +56,7 @@ class YuntongxunService {
 			'username' => 'kangshifu',
 			'password' => strtolower(md5('Ksf073#&')),
 			'mobile' => $mobile,
-			'content' => '动态兑换码：'.$code.'，请在15分钟内填写【康师傅绿茶】',
+			'content' => '专属视角动态兑换码：'.$code.'，请在15分钟内填写【#康师傅绿茶健康活力派#绿动健康走】',
 			'productid' => '676767',
 			'xh' => ''
 		];
