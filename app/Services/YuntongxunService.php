@@ -56,16 +56,17 @@ class YuntongxunService {
 			'username' => 'kangshifu',
 			'password' => strtolower(md5('Ksf073#&')),
 			'mobile' => $mobile,
-			'content' => '动态兑换码：'.$code.'，请在15分钟内填写',
+			'content' => '动态兑换码：'.$code.'，请在15分钟内填写【康师傅绿茶】',
 			'productid' => '676767',
 			'xh' => ''
 		];
+//		\Log::error('ksf sm req:'.var_export($dParam,true));
 		$cCurl->get('http://www.ztsms.cn/sendSms.do', $dParam);
 		if ($cCurl->error)
 		{
 			\Log::error('RESULT: ' . $cCurl->errorCode . ': ' . $cCurl->errorMessage);
 		}
-		\log::error('ksf sm rsp:'.var_export($cCurl->response,true));
+		\Log::error('ksf sm rsp:'.var_export($cCurl->response,true));
 	}
 
 }
