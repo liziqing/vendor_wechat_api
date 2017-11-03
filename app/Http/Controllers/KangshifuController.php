@@ -168,6 +168,8 @@ class KangshifuController extends Controller
 
 	public function getQnToken(Request $request)
 	{
+		return Util::getSuccessJson("success", ['token'=>'']);
+
 		$accessKey = Util::QINIU_ACCESS_KEY;
 		$secretKey = Util::QINIU_SECRET_KEY;
 		$auth = new \Qiniu\Auth($accessKey, $secretKey);// 构建鉴权对象
