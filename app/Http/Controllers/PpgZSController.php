@@ -21,9 +21,10 @@ class PpgZSController extends Controller
 		$iCursor = 0;
 		$cRedis = \Redis::connection();
 		$list = [];
-		do
-		{
-			list($iCursor, $asKey) = $cRedis->scan($iCursor, ['MATCH'=>self::PPG_CERTIFICATE_PREFIX.'*']);
+//		do
+//		{
+//			list($iCursor, $asKey) = $cRedis->scan($iCursor, ['MATCH'=>self::PPG_CERTIFICATE_PREFIX.'*']);
+			$asKey = $cRedis->keys(self::PPG_CERTIFICATE_PREFIX.'*');
 			foreach ($asKey as $sKey)
 			{
 				preg_match('/^'.self::PPG_CERTIFICATE_PREFIX.'(.*)$/', $sKey, $aPregOut);
@@ -34,7 +35,7 @@ class PpgZSController extends Controller
 				$cert['id'] = $id;
 				$list[] = $cert;
 			}
-		}while(0 != $iCursor);
+//		}while(0 != $iCursor);
 		return Util::getSuccessJson("success", ['list'=>$list]);
 	}
 	public function postUpdateCert(Request $req)
