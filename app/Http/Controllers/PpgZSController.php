@@ -27,7 +27,7 @@ class PpgZSController extends Controller
 			foreach ($asKey as $sKey)
 			{
 				preg_match('/^'.self::PPG_CERTIFICATE_PREFIX.'(.*)$/', $sKey, $aPregOut);
-				if (empty($aPregOut[1]))
+				if (empty($aPregOut[1]) || 'id' == $aPregOut[1])
 					continue;
 				$id = $aPregOut[1];
 				$cert = $cRedis->hgetall($sKey);
