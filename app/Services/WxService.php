@@ -51,7 +51,8 @@ class WxService{
     );
 
     static $aliasMap = [
-        'pt_christmas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2']
+        'pt_christmas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2'],
+        'ohui' => ['appid' => 'wxc9e38adf6b9814cd', 'secret' => '0c55f23872aa8801a14b2a9e1eabbfee'], //用的柿集app的公众号 weixin-shiji@yiyatech.com
     ];
 
     public function __construct($alias)
