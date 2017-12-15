@@ -12,5 +12,5 @@
 */
 
 Route::controller('weixin', 'WeixinController');
-Route::controller('kangshifu', 'KangshifuController');
+//Route::controller('kangshifu', 'KangshifuController');
 Route::controller('ppg', 'PpgZSController');
