@@ -28,6 +28,6 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-		$schedule->command('ksf:clear-lock')->daily();
+//		$schedule->command('ksf:clear-lock')->daily();
     }
 }
