@@ -52,7 +52,8 @@ class WxService{
 
     static $aliasMap = [
         'pt_christmas' => ['appid' => 'wx9a8bd58d910b0460', 'secret' => '220c4abbdda01e60f9ecf50156ccfaf2'],
-        'ohui' => ['appid' => 'wxc9e38adf6b9814cd', 'secret' => '0c55f23872aa8801a14b2a9e1eabbfee'], //用的柿集app的公众号 weixin-shiji@yiyatech.com
+        'ohui' => ['appid' => 'wx481eef17d41794f9', 'secret' => 'b0ce59699d43aedc77c1d1b2c9720d1a'],  //ohui自己的服务号
+        //'ohui' => ['appid' => 'wxc9e38adf6b9814cd', 'secret' => '0c55f23872aa8801a14b2a9e1eabbfee'], //用的柿集app的公众号 weixin-shiji@yiyatech.com
         //'ohui' => ['appid' => 'wx7065e65fe41e4ea0', 'secret' => 'ff20ebbecfb331d786f7606048b48740'], //用lxm19900207@163.com
     ];
 
